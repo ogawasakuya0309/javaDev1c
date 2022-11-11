@@ -1,8 +1,6 @@
 package presentation.servlet;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,11 +9,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import business.service.WebAppSampleService;
+
 /**
- * {@link SampleServlet}
+ * {@link SampleMemoServlet}
  */
-@WebServlet("/sample")
+@WebServlet("/Sample")
 public class SampleServlet extends HttpServlet {
+
+	private WebAppSampleService service = new WebAppSampleService();
 
 	/**
 	 * {@inheritDoc}
@@ -23,30 +25,57 @@ public class SampleServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String view = "/WEB-INF/view/sample.jsp";
+
+		String view = "/WEB-INF/view/highcard.jsp";
 		RequestDispatcher dispatcher = request.getRequestDispatcher(view);
 		dispatcher.forward(request, response);
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
+	* {@inheritDoc}
+	*/
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		//ここは無視してね
 		request.setCharacterEncoding("UTF-8");
-		log("************************************ param");
-		request.getParameterMap().entrySet()
-				.forEach(e -> log(e.getKey() + ":" + Arrays.toString(e.getValue())));
-		System.out.println("************************************ atr");
-		Collections.list(request.getAttributeNames()).stream()
-				.forEach(s -> log(s + ":" + request.getAttribute(s)));
-		System.out.println("************************************ atr session");
-		Collections.list(request.getSession().getAttributeNames()).stream()
-				.forEach(s -> log(s + ":" + request.getSession().getAttribute(s)));
-		Collections.list(request.getParameterNames()).forEach(n -> request.setAttribute(n, request.getParameter(n)));
 
+		//リクエストからデータを取り出す。
+		String kake = request.getParameter("kake");
+		String player = request.getParameter("player");
+
+		//リクエストにデータをセットする。
+		request.setAttribute("kake", kake);
+		request.setAttribute("player", player);
+
+		/////////10月18日追加分///////////
+		/******************************************
+		 * 独自定義のデータをJSPに送る。
+		 ******************************************/
+
+		///////////////【サンプル】///////////////////
+		//↓独自定義したデータ「dokuji」に「独自だよー」という文字列を格納↓
+		request.setAttribute("dokuji", "かえれたよー");
+
+		///////////////【チュートリアル】///////////////////
+		//↓独自定義したデータ「tutorial」に「チュートリアルです」という文字列
+		request.setAttribute("tutorial", "チュートリアルです");
+
+		///////////////練習問題①///////////////////
+		//独自定義したデータ「dokujiPra1」に「練習問題1できた」という文字列を
+		//格納し、JSPに表示しよう
+		request.setAttribute("dokujiPra1", "練習問題１できた");
+
+		///////////////練習問題②///////////////////
+		//独自定義したデータ「dokujiPra2」に変数「dokuji2」を格納し、JSPに表示しよう
+		String dokuji2 = "練習問題2できました。";
+
+		//リクエストをJSPに送る。
 		doGet(request, response);
+		/************************************************
+		 *             ここまで重要                     *
+		 ************************************************/
+
 	}
+
 }
